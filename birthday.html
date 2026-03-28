@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday</title>
+
+<style>
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial;
+}
+
+/* MATRIX */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* CENTER FIX (IMPORTANT) */
+.center {
+    position: fixed; /* tukar dari absolute ke fixed */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    white-space: pre-line;
+}
+
+/* TEXT STYLE */
+.neon, .message {
+    font-size: 70px;
+    color: #fff8b0;
+    text-shadow: 0 0 10px #ffd966, 0 0 30px #ffd966;
+}
+
+/* HEART */
+.heart {
+    width: 230px;
+    height: 230px;
+    position: relative;
+    transform: rotate(-45deg);
+    background: pink;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: beat 1s infinite;
+}
+
+.heart:before,
+.heart:after {
+    content: "";
+    width: 230px;
+    height: 230px;
+    background: pink;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.heart:before { top: -115px; }
+.heart:after { left: 115px; }
+
+.heart-text {
+    transform: rotate(45deg);
+    color: #ff1493;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 0 10px #ff1493;
+}
+
+/* HEART BEAT */
+@keyframes beat {
+    0%,100% { transform: scale(1) rotate(-45deg); }
+    50% { transform: scale(1.15) rotate(-45deg); }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+<div class="center neon" id="text">3</div>
+
+<script>
+// MATRIX
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = "ILOVEYOU";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#ff4d6d";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+setInterval(draw, 33);
+
+// TYPING
+function typeText(element, text, speed = 60, callback) {
+    let i = 0;
+    element.innerHTML = "";
+
+    const interval = setInterval(() => {
+        element.innerHTML += text[i];
+        i++;
+
+        if (i >= text.length) {
+            clearInterval(interval);
+            if (callback) callback();
+        }
+    }, speed);
+}
+
+// FLOW
+const text = document.getElementById("text");
+let count = 3;
+
+const interval = setInterval(() => {
+    count--;
+
+    if (count > 0) {
+        text.innerHTML = count;
+    } 
+    else if (count === 0) {
+        text.innerHTML = "✨";
+    } 
+    else if (count === -1) {
+
+        const message = `HAPPY BIRTHDAY
+MY LOVE
+MUHAMMAD 'AMIR ARIF`;
+
+        typeText(text, message, 60, () => {
+            setTimeout(() => {
+                text.innerHTML = `
+                    <div class="heart">
+                        <div class="heart-text">
+                            I love u sayang 💖
+                        </div>
+                    </div>
+                `;
+            }, 1500);
+        });
+    } 
+    else {
+        clearInterval(interval);
+    }
+
+}, 1200);
+
+</script>
+
+</body>
+</html>
